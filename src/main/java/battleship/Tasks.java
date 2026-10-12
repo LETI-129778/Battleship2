@@ -73,6 +73,9 @@ public class Tasks {
 						game.printMyBoard(true, false);
 
 						if (game.getRemainingShips() == 0) {
+
+							JogadasPDF.criarPDF(game.getAlienMoves());
+
 							game.over();
 							System.exit(0);
 						}
@@ -95,6 +98,9 @@ public class Tasks {
 						}
 
 						if (game.getRemainingShips() == 0) {
+
+							JogadasPDF.criarPDF(game.getAlienMoves());
+
 							game.over();
 							System.exit(0);
 						}
