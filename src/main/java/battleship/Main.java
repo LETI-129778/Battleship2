@@ -14,6 +14,11 @@ public class Main
     {
 		System.out.println("***  Battleship  ***");
 
+		// Visualização Gráfica do tabuleiro de jogo
+		new Thread(() -> {
+			TabuleiroVisualizacaoGrafica.main(args);
+		}).start();
+
 		Tasks.menu();
     }
 }
