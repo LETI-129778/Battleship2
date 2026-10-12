@@ -87,6 +87,9 @@ public class Tasks {
 							game.randomEnemyFire();
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
+
+							// chamada aqui dentro porque o simula tem o seu próprio ciclo automático
+							atualizarInterfaceGrafica(game, myFleet);
 							try {
 								Thread.sleep(3000);
 							} catch (InterruptedException e) {
@@ -113,6 +116,11 @@ public class Tasks {
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}
+			// Atualiza sempre o tabuleiro após qualquer ação
+			if (game != null && myFleet != null) {
+				atualizarInterfaceGrafica(game, myFleet);
+			}
+
 			System.out.print("> ");
 			command = in.next();
 		}
@@ -232,5 +240,68 @@ public class Tasks {
 			throw new IllegalArgumentException("Formato inválido. Use 'A3', 'A 3' ou similar.");
 		}
 	}
+    private static void atualizarInterfaceGrafica(IGame game, IFleet myFleet) {
+        if (game == null || myFleet == null) return;
 
+        //for (int linha = 0; linha < 10; linha++) {
+        //    for (int coluna = 0; coluna < 10; coluna++) {
+        //    }
+        //}
+
+		// 1. Limpar ambos os tabuleiros (pintar tudo de água)
+		for (int linha = 0; linha < 10; linha++) {
+			for (int coluna = 0; coluna < 10; coluna++) {
+				TabuleiroVisualizacaoGrafica.pintarCelula(true, linha, coluna, javafx.scene.paint.Color.DARKBLUE);
+				TabuleiroVisualizacaoGrafica.pintarCelula(false, linha, coluna, javafx.scene.paint.Color.DARKBLUE);
+			}
+		}
+
+		// 2. Desenhar os TEUS navios no TEU tabuleiro (true)
+		if (myFleet.getShips() != null) {
+			for (IShip ship : myFleet.getShips()) {
+				for (IPosition pos : ship.getPositions()) {
+					TabuleiroVisualizacaoGrafica.pintarCelula(true, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.GRAY);
+				}
+			}
+		}
+
+		// 3. Desenhar os tiros do INIMIGO (Alien Moves) no TEU tabuleiro (true)
+		if (game.getAlienMoves() != null) {
+			for (IMove move : game.getAlienMoves()) {
+				java.util.List<IPosition> shots = move.getShots();
+				java.util.List<IGame.ShotResult> results = move.getShotResults();
+
+				for (int i = 0; i < shots.size(); i++) {
+					IPosition pos = shots.get(i);
+					IGame.ShotResult result = results.get(i);
+
+					// Se result.ship() não for null, significa que o tiro acertou num navio
+					if (result.ship() != null) {
+						TabuleiroVisualizacaoGrafica.pintarCelula(true, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.RED);
+					} else {
+						TabuleiroVisualizacaoGrafica.pintarCelula(true, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.LIGHTBLUE);
+					}
+				}
+			}
+		}
+
+		// 4. Desenhar os TEUS tiros (My Moves) no tabuleiro do INIMIGO (false)
+		if (game.getMyMoves() != null) {
+			for (IMove move : game.getMyMoves()) {
+				java.util.List<IPosition> shots = move.getShots();
+				java.util.List<IGame.ShotResult> results = move.getShotResults();
+
+				for (int i = 0; i < shots.size(); i++) {
+					IPosition pos = shots.get(i);
+					IGame.ShotResult result = results.get(i);
+
+					if (result.ship() != null) { // Acertaste num navio inimigo!
+						TabuleiroVisualizacaoGrafica.pintarCelula(false, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.RED);
+					} else { // Tiro na água
+						TabuleiroVisualizacaoGrafica.pintarCelula(false, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.LIGHTBLUE);
+					}
+				}
+			}
+		}
+    }
 }
