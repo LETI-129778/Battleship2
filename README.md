@@ -1,4 +1,4 @@
-# ⚓ Battleship 2.0
+<img width="1000" height="406" alt="image" src="https://github.com/user-attachments/assets/1a8438f9-0e95-4002-8ba2-2ca7ecb17668" /># ⚓ Battleship 2.0
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Java Version](https://img.shields.io/badge/Java-17%2B-blue)
@@ -17,6 +17,57 @@
 | LETI | 129773 | Natalia Hortense |
 
 ---
+
+Vídeo user story + LLM: https://youtu.be/4ChOA_-mKiQ
+
+Diário de bordo do LLM:
+rajada 1:B3 F7 I4 - 1 caravela atingida, 2 em agua
+
+rajada 2:B4 F8 I5 - 3 em agua 
+
+rajada 3:A3 E7 H4 - 1 caravela afundada, 2 em agua
+
+rajada 4:D2 G9 J6 - 1 Nau atingida, 2 em agua
+
+rajada 5:D3 G10 J7 - 1 Galeão atingido, 2 em agua
+
+rajada 6:D1 G8 J5 - 1 barca afundada, 1 nau atingida, 1 em agua
+
+rajada 7:G7 J4 C3 - 1 Nau afundada, 2 em agua
+
+rajada 8:D4 E3 J8 - 1 Galeão atingido, 2 em agua
+
+rajada 9:D5 F3 J9 - 1 Galeão atingido, 2 em agua
+
+rajada 10:C5 E5 H2 - 3 em agua
+
+rajada 11:F2 F4 F10 - 1 galeão atingido, 2 em agua
+
+rajada 12:E4 A8 H8 - 1 Galeão afundado, 2 em agua
+
+rajada 13:B7 H3 I9 - 1 caravela atingida, 1 nau atingida, 1 em agua
+
+rajada 14:B8 I3 I10 - 3 em agua
+
+rajada 15:B6 A7 I8 - 1 nau atingida, 2 em agua
+
+rajada 16:C7 H9 I7 - 1 Caravela afundada, 1 fragata atingida 1 em agua
+
+rajada 17:G1 C9 A5 - 1 barca afundada 1 fragata atingida 1 em agua
+
+rajada 18:F1 H1 D9 - 1 Caravel atingida, 1 fragata atingida, 1 em agua
+
+rajada 19:B9 E9 E1 - 1 caravela afundada, 1 fragata atingida, 1 em agua
+
+rajada 20:A9 F9 H5 - 1 fragata afundada, 2 em agua
+
+rajada 21:A1 B5 I1 - 3 em agua
+
+rajada 22:B1 I2 J1 - 1 barca afundada, 2 em agua
+
+rajada 23:J2 A1(tiro repetido) A2 - 1 tiro repetido, 2 em agua
+
+rajada 24:J3 F6 G6 - 1 barca afundada, 2 em agua
 
 ## 📖 Table of Contents
 - [Project Overview](#-project-overview)
