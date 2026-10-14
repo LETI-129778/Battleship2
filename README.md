@@ -19,6 +19,7 @@
 ---
 
 Vídeo user story + LLM: https://youtu.be/4ChOA_-mKiQ
+
 Diário de bordo do LLM:
 rajada 1:B3 F7 I4 - 1 caravela atingida, 2 em agua
 rajada 2:B4 F8 I5 - 3 em agua 
