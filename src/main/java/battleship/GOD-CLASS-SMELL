@@ -5,7 +5,7 @@ public class GodClassTest {
     private int p11, p12, p13, p14, p15, p16, p17, p18, p19, p20;
     private int p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32;
     private String s1, s2, s3, s4, s5;
-    private boolean b1, b2, b3, b4, b5;
+    private boolean b1, b2, b3, b4, b5, b6;
 
     // 2. Demasiados métodos (Dispara métricas como "Too Many Methods" / NOM e WMC elevados)
     public void acao1() { System.out.println("Ação 1"); }
