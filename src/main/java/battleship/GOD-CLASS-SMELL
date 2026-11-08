@@ -1,32 +1,38 @@
-// 129774 - Teresa Cunha
-package battleship; // ajusta ao teu pacote
+public class GodClassTest {
 
-public class GodClassDemo {
-    public void m01() { }
-    public void m02() { }
-    public void m03() { }
-    public void m04() { }
-    public void m05() { }
-    public void m06() { }
-    public void m07() { }
-    public void m08() { }
-    public void m09() { }
-    public void m10() { }
-    public void m11() { }
-    public void m12() { }
-    public void m13() { }
-    public void m14() { }
-    public void m15() { }
-    public void m16() { }
-    public void m17() { }
-    public void m18() { }
-    public void m19() { }
-    public void m20() { }
-    public void m21() { }
-    public void m22() { }
-    public void m23() { }
-    public void m24() { }
-    public void m25() { }
-    public void m26() { }
-    public void m27() { }
+    // 1. Demasiados atributos (Dispara métricas como "Too Many Fields" / NOA elevado)
+    private int p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
+    private int p11, p12, p13, p14, p15, p16, p17, p18, p19, p20;
+    private int p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32;
+    private String s1, s2, s3, s4, s5;
+    private boolean b1, b2, b3, b4, b5;
+
+    // 2. Demasiados métodos (Dispara métricas como "Too Many Methods" / NOM e WMC elevados)
+    public void acao1() { System.out.println("Ação 1"); }
+    public void acao2() { System.out.println("Ação 2"); }
+    public void acao3() { System.out.println("Ação 3"); }
+    public void acao4() { System.out.println("Ação 4"); }
+    public void acao5() { System.out.println("Ação 5"); }
+    public void acao6() { System.out.println("Ação 6"); }
+    public void acao7() { System.out.println("Ação 7"); }
+    public void acao8() { System.out.println("Ação 8"); }
+    public void acao9() { System.out.println("Ação 9"); }
+    public void acao10() { System.out.println("Ação 10"); }
+    public void acao11() { System.out.println("Ação 11"); }
+    public void acao12() { System.out.println("Ação 12"); }
+    public void acao13() { System.out.println("Ação 13"); }
+    public void acao14() { System.out.println("Ação 14"); }
+    public void acao15() { System.out.println("Ação 15"); }
+    public void acao16() { System.out.println("Ação 16"); }
+    public void acao17() { System.out.println("Ação 17"); }
+    public void acao18() { System.out.println("Ação 18"); }
+    public void acao19() { System.out.println("Ação 19"); }
+    public void acao20() { System.out.println("Ação 20"); }
+
+    // Métodos utilitários duplicados para inflar a complexidade da classe
+    public int calcularAlgo1() { return p1 + p2; }
+    public int calcularAlgo2() { return p3 + p4; }
+    public int calcularAlgo3() { return p5 + p6; }
+    public int calcularAlgo4() { return p7 + p8; }
+    public int calcularAlgo5() { return p9 + p10; }
 }
