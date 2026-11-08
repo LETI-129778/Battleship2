@@ -3,7 +3,7 @@ profile:
   base:
     name: empty
   inspections:
-    - inspection: MethodCount
+    - inspection: ClassWithTooManyMethods
     enabled: true
     options:
-      <nome-da-opcao>: 15
+      maxMethodCount: 15
