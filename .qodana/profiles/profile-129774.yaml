@@ -4,6 +4,6 @@ profile:
     name: empty
   inspections:
     - inspection: ClassWithTooManyMethods
-    enabled: true
-    options:
-      maxMethodCount: 15
+      enabled: true
+      options:
+        maxMethodCount: 15
