@@ -6,4 +6,4 @@ profile:
     - inspection: ClassWithTooManyMethods
       enabled: true
       options:
-        maxMethodCount: 3
+        m_limit: 3
