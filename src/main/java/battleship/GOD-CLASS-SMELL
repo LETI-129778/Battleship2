@@ -22,4 +22,11 @@ public class GodClassDemo {
     public void m18() { }
     public void m19() { }
     public void m20() { }
+    public void m21() { }
+    public void m22() { }
+    public void m23() { }
+    public void m24() { }
+    public void m25() { }
+    public void m26() { }
+    public void m27() { }
 }
