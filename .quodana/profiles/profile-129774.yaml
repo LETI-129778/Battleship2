@@ -1,0 +1,9 @@
+# 12345 - Nome do Aluno
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: MethodCount
+    enabled: true
+    options:
+      <nome-da-opcao>: 15
