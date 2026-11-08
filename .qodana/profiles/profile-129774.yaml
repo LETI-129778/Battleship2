@@ -3,8 +3,11 @@ profile:
   base:
     name: empty
   inspections:
-    - inspection: ClassWithTooManyMethods
+    - inspection: MethodCount
       enabled: true
-      severity: WARNING
       options:
         m_limit: 15
+    - inspection: ClassComplexity
+      enabled: true
+      options:
+        m_limit: 47
