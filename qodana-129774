@@ -1,9 +1,0 @@
-# 129774 - Teresa Cunha
-version: "1.0"
-linter: jetbrains/qodana-jvm-community:2026.2
-projectJDK: 21.0.12
-profile:
-  path: .qodana/profiles/profile-129774.yaml
-failureConditions:
-  severityThresholds:
-    any: 0
