@@ -1,9 +1,10 @@
-# 12345 - Nome do Aluno
+# 129774 - Teresa Cunha
 profile:
   base:
     name: empty
   inspections:
     - inspection: ClassWithTooManyMethods
       enabled: true
+      severity: WARNING
       options:
-        m_limit: 3
+        m_limit: 15
