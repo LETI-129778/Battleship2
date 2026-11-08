@@ -1,27 +1,24 @@
-name: Qodana Quality Gate (God Class Detection)
-
+# 129774 - Teresa Cunha
+name: Qodana smell gate 129774
 on:
-  push:
-    branches: [ "main", "master" ]
   pull_request:
-
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
 jobs:
   qodana:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-
-      - name: Run Qodana Scan
-        uses: JetBrains/qodana-action@v2024.3.4
+      - uses: JetBrains/qodana-action@v2026.2
         with:
-          args: --linter,jetbrains/qodana-jvm-community:2024.3
-          pr-mode: false
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+          args: --config qodana-129774.yaml
+          use-annotations: true
+          post-pr-comment: true
