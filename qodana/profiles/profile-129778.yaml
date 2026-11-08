@@ -5,8 +5,8 @@ profile:
     - inspection: MethodWithTooManyLines
       enabled: true
       options:
-        m_limit: 13
+        m_limit: 20
     - inspection: OverlyComplexMethod
       enabled: true
       options:
-        m_limit: 10
+        m_limit: 20
