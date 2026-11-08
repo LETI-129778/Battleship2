@@ -1,0 +1,9 @@
+# 12345 - Nome do Aluno
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: ClassWithTooManyMethods
+    enabled: true
+    options:
+      maxMethodCount: 15
