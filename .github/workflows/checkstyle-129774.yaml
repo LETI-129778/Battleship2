@@ -1,0 +1,23 @@
+# 129774 - Teresa Cunha
+name: Checkstyle naming gate 129774
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dbelyaev/action-checkstyle@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_config: checkstyle-129774.xml
+          reporter: github-pr-check
+          level: error
+          fail_level: error
+          filter_mode: nofilter
