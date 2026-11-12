@@ -1,0 +1,191 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TabuleiroVisualizacaoGrafica</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">battleship</a>
+</div>
+
+<h1>Coverage Summary for Class: TabuleiroVisualizacaoGrafica (battleship)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TabuleiroVisualizacaoGrafica</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (31/31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package battleship;
+&nbsp;
+&nbsp;import javafx.application.Application;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.geometry.Insets;
+&nbsp;import javafx.scene.Scene;
+&nbsp;import javafx.scene.control.Label;
+&nbsp;import javafx.scene.layout.GridPane;
+&nbsp;import javafx.scene.layout.HBox;
+&nbsp;import javafx.scene.layout.VBox;
+&nbsp;import javafx.scene.paint.Color;
+&nbsp;import javafx.scene.shape.Rectangle;
+&nbsp;import javafx.scene.text.Font;
+&nbsp;import javafx.stage.Stage;
+&nbsp;
+<b class="fc">&nbsp;public class TabuleiroVisualizacaoGrafica extends Application {</b>
+&nbsp;
+&nbsp;    private static final int TAMANHO_CELULA = 35;
+&nbsp;    private static final int LINHAS = 10;
+&nbsp;    private static final int COLUNAS = 10;
+&nbsp;
+<b class="fc">&nbsp;    private static Rectangle[][] meuTabuleiro = new Rectangle[LINHAS][COLUNAS];</b>
+<b class="fc">&nbsp;    private static Rectangle[][] advTabuleiro = new Rectangle[LINHAS][COLUNAS];</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void start(Stage primaryStage) {
+<b class="fc">&nbsp;        GridPane grelhaMeu = criarGrelha(meuTabuleiro);</b>
+<b class="fc">&nbsp;        GridPane grelhaAdv = criarGrelha(advTabuleiro);</b>
+&nbsp;
+<b class="fc">&nbsp;        Label tituloMeu = new Label(&quot;A Minha Frota&quot;);</b>
+<b class="fc">&nbsp;        tituloMeu.setFont(new Font(&quot;Arial&quot;, 16));</b>
+&nbsp;
+<b class="fc">&nbsp;        Label tituloAdv = new Label(&quot;Frota Inimiga&quot;);</b>
+<b class="fc">&nbsp;        tituloAdv.setFont(new Font(&quot;Arial&quot;, 16));</b>
+&nbsp;
+<b class="fc">&nbsp;        VBox painelMeu = new VBox(10, tituloMeu, grelhaMeu);</b>
+<b class="fc">&nbsp;        VBox painelAdv = new VBox(10, tituloAdv, grelhaAdv);</b>
+&nbsp;
+<b class="fc">&nbsp;        HBox layoutPrincipal = new HBox(50, painelMeu, painelAdv);</b>
+<b class="fc">&nbsp;        layoutPrincipal.setPadding(new Insets(20));</b>
+&nbsp;
+<b class="fc">&nbsp;        Scene scene = new Scene(layoutPrincipal, 850, 450);</b>
+<b class="fc">&nbsp;        primaryStage.setTitle(&quot;Batalha Naval - Simulação Visual&quot;);</b>
+<b class="fc">&nbsp;        primaryStage.setScene(scene);</b>
+<b class="fc">&nbsp;        primaryStage.show();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private GridPane criarGrelha(Rectangle[][] matriz) {
+<b class="fc">&nbsp;        GridPane grelha = new GridPane();</b>
+<b class="fc">&nbsp;        for (int linha = 0; linha &lt; LINHAS; linha++) {</b>
+<b class="fc">&nbsp;            for (int coluna = 0; coluna &lt; COLUNAS; coluna++) {</b>
+<b class="fc">&nbsp;                Rectangle celula = new Rectangle(TAMANHO_CELULA, TAMANHO_CELULA);</b>
+<b class="fc">&nbsp;                celula.setFill(Color.DARKBLUE); // Água desconhecida</b>
+<b class="fc">&nbsp;                celula.setStroke(Color.BLACK); // Bordas</b>
+<b class="fc">&nbsp;                matriz[linha][coluna] = celula;</b>
+<b class="fc">&nbsp;                grelha.add(celula, coluna, linha);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return grelha;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Método universal para atualizar qualquer célula
+&nbsp;    public static void pintarCelula(boolean isMeuTabuleiro, int linha, int coluna, Color cor) {
+<b class="fc">&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="fc">&nbsp;            Rectangle[][] matrizAlvo = isMeuTabuleiro ? meuTabuleiro : advTabuleiro;</b>
+<b class="fc">&nbsp;            if (matrizAlvo[linha][coluna] != null) {</b>
+<b class="fc">&nbsp;                matrizAlvo[linha][coluna].setFill(cor);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void main(String[] args) {
+<b class="fc">&nbsp;        launch(args);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-11-12 15:10</div>
+</div>
+</body>
+</html>

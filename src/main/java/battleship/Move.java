@@ -135,9 +135,8 @@ public class Move implements IMove {
 				}
 
 				if (repeatedShots > 0) {
-					if (validShots > 0) {
-						output.append(", ");
-					}
+					//validShots > 0 é sempre verdadeiro
+					output.append(", ");
 					output.append(repeatedShots).append(" tiro").append(repeatedShots > 1 ? "s" : "").append(" repetido").append(repeatedShots > 1 ? "s" : "");
 				}
 			}
