@@ -1,0 +1,179 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JogadasPDF</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">battleship</a>
+</div>
+
+<h1>Coverage Summary for Class: JogadasPDF (battleship)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JogadasPDF</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package battleship;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.apache.pdfbox.pdmodel.PDDocument;
+&nbsp;import org.apache.pdfbox.pdmodel.PDPage;
+&nbsp;import org.apache.pdfbox.pdmodel.PDPageContentStream;
+&nbsp;import org.apache.pdfbox.pdmodel.font.PDType1Font;
+&nbsp;import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+&nbsp;
+<b class="fc">&nbsp;public class JogadasPDF {</b>
+&nbsp;
+&nbsp;    public static void criarPDF(List&lt;IMove&gt; jogadas) {
+&nbsp;
+&nbsp;        try {
+&nbsp;
+<b class="fc">&nbsp;            PDDocument documento = new PDDocument();</b>
+<b class="fc">&nbsp;            PDPage pagina = new PDPage();</b>
+&nbsp;
+<b class="fc">&nbsp;            documento.addPage(pagina);</b>
+&nbsp;
+<b class="fc">&nbsp;            PDPageContentStream conteudo = new PDPageContentStream(documento, pagina);</b>
+&nbsp;
+<b class="fc">&nbsp;            conteudo.beginText();</b>
+&nbsp;
+<b class="fc">&nbsp;            conteudo.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA),12);</b>
+&nbsp;
+<b class="fc">&nbsp;            conteudo.newLineAtOffset(50, 750);</b>
+&nbsp;
+<b class="fc">&nbsp;            conteudo.showText(&quot;Historico de Jogadas&quot;);</b>
+<b class="fc">&nbsp;            conteudo.newLineAtOffset(0, -20);</b>
+&nbsp;
+<b class="fc">&nbsp;            int numeroJogada = 1;</b>
+&nbsp;
+<b class="fc">&nbsp;            for (IMove jogada : jogadas) {</b>
+&nbsp;
+<b class="fc">&nbsp;                StringBuilder linha = new StringBuilder();</b>
+<b class="fc">&nbsp;                linha.append(&quot;Jogada &quot;).append(numeroJogada).append(&quot;: &quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                for (IPosition tiro : jogada.getShots()) {</b>
+<b class="fc">&nbsp;                    linha.append(tiro).append(&quot;  &quot;);</b>
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                conteudo.showText(linha.toString());</b>
+<b class="fc">&nbsp;                conteudo.newLineAtOffset(0, -15);</b>
+&nbsp;
+<b class="fc">&nbsp;                numeroJogada++;</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            conteudo.endText();</b>
+&nbsp;            conteudo.close();
+&nbsp;
+<b class="fc">&nbsp;            documento.save(&quot;jogadas.pdf&quot;);</b>
+&nbsp;            documento.close();
+&nbsp;
+<b class="fc">&nbsp;            System.out.println(&quot;PDF criado com sucesso: jogadas.pdf&quot;);</b>
+&nbsp;
+&nbsp;        } catch (IOException e) {
+&nbsp;            //e.printStackTrace();
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-11-13 23:30</div>
+</div>
+</body>
+</html>
