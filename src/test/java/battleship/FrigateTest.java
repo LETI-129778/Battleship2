@@ -41,6 +41,9 @@ public class FrigateTest {
 	 */
 	@Test
 	void testConstructorNorth() {
+		IPosition pos = new Position(5, 5);
+		Frigate frigate = new Frigate(Compass.NORTH, pos);
+
 		assertNotNull(frigate, "Error: Frigate instance should not be null.");
 		assertEquals("Fragata", frigate.getCategory(), "Error: Frigate category should be 'Fragata'.");
 		assertEquals(Compass.NORTH, frigate.getBearing(), "Error: Frigate bearing is incorrect.");
@@ -53,12 +56,27 @@ public class FrigateTest {
 		assertEquals(new Position(7, 5), positions.get(2), "Error: Third position is incorrect for NORTH.");
 		assertEquals(new Position(8, 5), positions.get(3), "Error: Fourth position is incorrect for NORTH.");
 	}
+	/**
+	 * Test for the constructor with SOUTH bearing.
+	 */
+	@Test
+	void testConstructorSouth() {
+		IPosition pos = new Position(2, 2);
+		Frigate frigate = new Frigate(Compass.SOUTH, pos);
 
+		List<IPosition> positions = frigate.getPositions();
+		assertEquals(4, positions.size());
+		assertEquals(new Position(2, 2), positions.get(0));
+		assertEquals(new Position(3, 2), positions.get(1));
+		assertEquals(new Position(4, 2), positions.get(2));
+		assertEquals(new Position(5, 2), positions.get(3));
+	}
 	/**
 	 * Test for the constructor with EAST bearing.
 	 */
 	@Test
 	void testConstructorEast() {
+		IPosition pos = new Position(5, 5);
 		frigate = new Frigate(Compass.EAST, new Position(5, 5));
 		List<IPosition> positions = frigate.getPositions();
 
@@ -75,6 +93,7 @@ public class FrigateTest {
 	 */
 	@Test
 	void testConstructorWest() {
+		IPosition pos = new Position(5, 5);
 		frigate = new Frigate(Compass.WEST, new Position(5, 5));
 		List<IPosition> positions = frigate.getPositions();
 
