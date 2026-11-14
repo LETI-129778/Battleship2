@@ -1,29 +1,18 @@
 package battleship;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for Game.
+ *
  * Author: britoeabreu
  * Date: 2024-03-19
  * Time: 15:30
- * Cyclomatic Complexity for each method:
- * - Game (constructor): 1
- * - fire: 7
- * - getShots: 1
- * - getRepeatedShots: 1
- * - getInvalidShots: 1
- * - getHits: 1
- * - getSunkShips: 1
- * - getRemainingShips: 1
- * - validShot: 3
- * - repeatedShot: 2
- * - printBoard: 1
- * - printValidShots: 1
- * - printFleet: 1
  */
 public class GameTest {
 
@@ -31,7 +20,7 @@ public class GameTest {
 
 	@BeforeEach
 	void setUp() {
-		game = new Game(new Fleet()); // Assuming Fleet is a concrete implementation of IFleet
+		game = new Game(new Fleet());
 	}
 
 	@AfterEach
@@ -100,4 +89,156 @@ public class GameTest {
 		assertEquals(1, game.getRemainingShips(), "Remaining ships count should be 1 after sinking one of two ships.");
 	}
 
+	@Test
+	void getAlienFleetAndGetMyMovesTest() {
+		assertNotNull(game.getAlienFleet(), "Alien fleet should not be null.");
+		assertNotNull(game.getMyMoves(), "My moves list should not be null.");
+	}
+
+	@Test
+	void printBoardMethodsAndOverTest() {
+		List<IPosition> positions = List.of(new Position(0, 0), new Position(0, 1), new Position(0, 2));
+		game.fireShots(positions);
+
+		assertDoesNotThrow(() -> {
+			game.printMyBoard(true, true);
+			game.printMyBoard(false, false);
+			game.printAlienBoard(true, true);
+			game.printAlienBoard(false, false);
+			game.over();
+		}, "Printing boards and game over banner should execute without exception.");
+	}
+
+	@Test
+	void jsonShotsSerializationTest() {
+		List<IPosition> positions = List.of(new Position(1, 1));
+		String json = Game.jsonShots(positions);
+		assertNotNull(json, "Serialized JSON string should not be null.");
+		assertTrue(json.contains("row"), "JSON output should contain 'row'.");
+		assertTrue(json.contains("column"), "JSON output should contain 'column'.");
+	}
+
+	@Test
+	void randomEnemyFireTest() {
+		String json = game.randomEnemyFire();
+		assertNotNull(json, "Random enemy fire should return a serialized JSON string.");
+	}
+
+	@Test
+	void readEnemyFireValidCombinedTest() {
+		Scanner scanner = new Scanner("A1 B2 C3");
+		String json = game.readEnemyFire(scanner);
+		assertNotNull(json, "Read enemy fire with combined tokens should succeed.");
+	}
+
+	@Test
+	void readEnemyFireValidSeparateTest() {
+		Scanner scanner = new Scanner("A 1 B 2 C 3");
+		String json = game.readEnemyFire(scanner);
+		assertNotNull(json, "Read enemy fire with separate column/row tokens should succeed.");
+	}
+
+	@Test
+	void readEnemyFireIncompletePositionExceptionTest() {
+		Scanner scanner = new Scanner("A invalid B2 C3");
+		assertThrows(IllegalArgumentException.class, () -> game.readEnemyFire(scanner),
+				"Should throw IllegalArgumentException when column is not followed by a row.");
+	}
+
+	@Test
+	void readEnemyFireWrongShotCountExceptionTest() {
+		Scanner scanner = new Scanner("A1");
+		assertThrows(IllegalArgumentException.class, () -> game.readEnemyFire(scanner),
+				"Should throw IllegalArgumentException when shot count does not match NUMBER_SHOTS.");
+	}
+
+	@Test
+	void fireShotsWrongSizeExceptionTest() {
+		List<IPosition> invalidSize = List.of(new Position(0, 0));
+		assertThrows(IllegalArgumentException.class, () -> game.fireShots(invalidSize),
+				"Should throw IllegalArgumentException when firing incorrect number of shots.");
+	}
+
+	@Test
+	void fireSingleShotHitAndSinkTest() {
+		IFleet fleet = game.getMyFleet();
+		Ship barge = new Barge(Compass.NORTH, new Position(3, 3));
+		fleet.addShip(barge);
+
+		game.fireSingleShot(new Position(3, 3), false);
+		assertEquals(1, game.getHits(), "Hits count should increment to 1.");
+		assertEquals(1, game.getSunkShips(), "Sunk ships count should increment to 1 after sinking barge.");
+	}
+
+	@Test
+	void printShipsSunkShipAdjacentTest() {
+		IFleet fleet = game.getMyFleet();
+		Ship barge = new Barge(Compass.NORTH, new Position(3, 3));
+		fleet.addShip(barge);
+		barge.sink();
+
+		assertDoesNotThrow(() -> game.printMyBoard(true, true),
+				"Printing board with a sunk ship should render adjacent markers correctly.");
+	}
+
+	@Test
+	void printBoardShotsHitShipMarkerTest() {
+		IFleet fleet = game.getMyFleet();
+		Ship barge = new Barge(Compass.NORTH, new Position(4, 4));
+		fleet.addShip(barge);
+
+		List<IPosition> positions = List.of(new Position(4, 4), new Position(0, 0), new Position(0, 1));
+		game.fireShots(positions);
+
+		assertDoesNotThrow(() -> game.printMyBoard(true, false),
+				"Printing board showing shots hitting ships should execute successfully.");
+	}
+
+	@Test
+	void printBoardShotsAdjacentMarkerHitTest() {
+		IFleet fleet = game.getMyFleet();
+		Ship barge = new Barge(Compass.NORTH, new Position(3, 3));
+		fleet.addShip(barge);
+		barge.sink();
+
+		List<IPosition> positions = List.of(new Position(2, 3), new Position(0, 0), new Position(0, 1));
+		game.fireShots(positions); // (Note: keeping your exact method calls)
+
+		assertDoesNotThrow(() -> game.printMyBoard(true, false),
+				"Printing board hitting adjacent marker should execute successfully.");
+	}
+
+	@Test
+	void randomEnemyFireElseBranchTest() {
+		List<IPosition> batch = new ArrayList<>();
+		int totalFired = 0;
+		// Fire 99 shots out of 100 to leave exactly 1 candidate shot (< NUMBER_SHOTS i.e., < 3)
+		for (int r = 0; r < Game.BOARD_SIZE; r++) {
+			for (int c = 0; c < Game.BOARD_SIZE; c++) {
+				if (totalFired < 99) {
+					batch.add(new Position(r, c));
+					totalFired++;
+					if (batch.size() == Game.NUMBER_SHOTS) {
+						game.fireShots(batch);
+						batch = new ArrayList<>();
+					}
+				}
+			}
+		}
+		String json = game.randomEnemyFire();
+		assertNotNull(json, "Random enemy fire when candidateShots < NUMBER_SHOTS should execute.");
+	}
+
+
+
+	@Test
+	void testAssertionsFailures() {
+		assertThrows(AssertionError.class, () -> Game.printBoard(null, new ArrayList<>(), true, true));
+		assertThrows(AssertionError.class, () -> Game.printBoard(new Fleet(), null, true, true));
+		assertThrows(AssertionError.class, () -> Game.jsonShots(null));
+		assertThrows(AssertionError.class, () -> game.readEnemyFire(null));
+		assertThrows(AssertionError.class, () -> game.fireShots(null));
+		assertThrows(AssertionError.class, () -> game.fireSingleShot(null, false));
+		assertThrows(AssertionError.class, () -> game.repeatedShot(null));
+	}
 }

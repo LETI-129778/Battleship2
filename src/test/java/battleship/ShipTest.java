@@ -1,30 +1,13 @@
 package battleship;
 
 import org.junit.jupiter.api.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
 /**
  * Test class for Ship.
- * Author: ${user.name}
- * Date: ${current_date}
- * Time: ${current_time}
- * Cyclomatic Complexity for each method:
- * - Constructor: 1
- * - getCategory: 1
- * - getSize: 1
- * - getBearing: 1
- * - getPositions: 1
- * - stillFloating: 2
- * - shoot: 2
- * - occupies: 2
- * - tooCloseTo (IShip): 2
- * - tooCloseTo (IPosition): 2
- * - getTopMostPos: 2
- * - getBottomMostPos: 2
- * - getLeftMostPos: 2
- * - getRightMostPos: 2
  */
 public class ShipTest {
 
@@ -32,7 +15,6 @@ public class ShipTest {
 
     @BeforeEach
     void setUp() {
-        // Since Ship is abstract, instantiate it with a concrete subclass (e.g., Barge)
         ship = new Barge(Compass.NORTH, new Position(5, 5));
         shipBorder = new Barge(Compass.NORTH, new Position(0, 0));
     }
@@ -40,202 +22,442 @@ public class ShipTest {
     @AfterEach
     void tearDown() {
         ship = null;
+        shipBorder = null;
     }
 
-    /**
-     * Test for the constructor.
-     * Cyclomatic Complexity: 1
-     */
     @Test
     void testConstructor() {
-        assertNotNull(ship, "Error: Ship instance should not be null.");
-        assertEquals("Barca", ship.getCategory(), "Error: Ship category is incorrect.");
-        assertEquals(Compass.NORTH, ship.getBearing(), "Error: Ship bearing is incorrect.");
-        assertEquals(1, ship.getSize(), "Error: Ship size is incorrect.");
-        assertFalse(ship.getPositions().isEmpty(), "Error: Ship positions should not be empty.");
+        assertNotNull(ship);
+        assertEquals("Barca", ship.getCategory());
+        assertEquals(Compass.NORTH, ship.getBearing());
+        assertEquals(1, ship.getSize());
+        assertFalse(ship.getPositions().isEmpty());
     }
 
-    /**
-     * Test for the getCategory method.
-     * Cyclomatic Complexity: 1
-     */
     @Test
     void testGetCategory() {
-        assertEquals("Barca", ship.getCategory(), "Error: Ship category should be 'Barca'.");
+        assertEquals("Barca", ship.getCategory());
     }
 
-    /**
-     * Test for the getSize method.
-     * Cyclomatic Complexity: 1
-     */
     @Test
     void testGetSize() {
-        assertEquals(1, ship.getSize(), "Error: Ship size should be 1.");
+        assertEquals(1, ship.getSize());
     }
 
-    /**
-     * Test for the getBearing method.
-     * Cyclomatic Complexity: 1
-     */
     @Test
     void testGetBearing() {
-        assertEquals(Compass.NORTH, ship.getBearing(), "Error: Ship bearing should be NORTH.");
+        assertEquals(Compass.NORTH, ship.getBearing());
     }
 
-    /**
-     * Test for the getPositions method.
-     * Cyclomatic Complexity: 1
-     */
     @Test
     void testGetPositions() {
         List<IPosition> positions = ship.getPositions();
-        assertNotNull(positions, "Error: Ship positions should not be null.");
-        assertEquals(1, positions.size(), "Error: Ship should have exactly one position.");
-        assertEquals(5, positions.get(0).getRow(), "Error: Position's row should be 5.");
-        assertEquals(5, positions.get(0).getColumn(), "Error: Position's column should be 5.");
+
+        assertNotNull(positions);
+        assertEquals(1, positions.size());
+        assertEquals(5, positions.get(0).getRow());
+        assertEquals(5, positions.get(0).getColumn());
     }
 
-    /**
-     * Test for the stillFloating method (all positions intact).
-     * Cyclomatic Complexity: 2
-     */
     @Test
     void testStillFloating1() {
-        assertTrue(ship.stillFloating(), "Error: Ship should still be floating.");
+        assertTrue(ship.stillFloating());
     }
 
-    /**
-     * Test for the stillFloating method (all positions hit).
-     */
     @Test
     void testStillFloating2() {
         ship.getPositions().get(0).shoot();
-        assertFalse(ship.stillFloating(), "Error: Ship should no longer be floating after being hit.");
+
+        assertFalse(ship.stillFloating());
     }
 
-    /**
-     * Test for the shoot method (valid position).
-     * Cyclomatic Complexity: 2
-     */
+    @Test
+    void testStillFloatingWithSomePositionsHit() {
+        Ship multiShip = new Frigate(Compass.NORTH, new Position(5, 5));
+
+        multiShip.getPositions().get(0).shoot();
+
+        assertTrue(multiShip.stillFloating());
+    }
+
     @Test
     void testShoot1() {
         Position target = new Position(5, 5);
+
         ship.shoot(target);
-        assertTrue(ship.getPositions().get(0).isHit(), "Error: Position should be marked as hit.");
+
+        assertTrue(ship.getPositions().get(0).isHit());
     }
 
-    /**
-     * Test for the shoot method (invalid position).
-     */
     @Test
     void testShoot2() {
         Position target = new Position(0, 0);
-        ship.shoot(target); // No exception expected
-        assertFalse(ship.getPositions().get(0).isHit(), "Error: Position should not be marked as hit for an invalid target.");
+
+        ship.shoot(target);
+
+        assertFalse(ship.getPositions().get(0).isHit());
     }
 
-    /**
-     * Test for the occupies method (position occupied).
-     * Cyclomatic Complexity: 2
-     */
+    @Test
+    void testShootAtNonMatchingPosition() {
+        Ship multiShip = new Frigate(Compass.NORTH, new Position(5, 5));
+
+        multiShip.shoot(new Position(5, 6));
+
+        for (IPosition position : multiShip.getPositions()) {
+            assertFalse(position.isHit());
+        }
+    }
+
+    @Test
+    void testShootAtEveryPosition() {
+        Ship multiShip = new Frigate(Compass.NORTH, new Position(5, 5));
+
+        for (IPosition position : multiShip.getPositions()) {
+            multiShip.shoot(position);
+        }
+
+        for (IPosition position : multiShip.getPositions()) {
+            assertTrue(position.isHit());
+        }
+    }
+
+    @Test
+    void testSink() {
+        ship.sink();
+
+        assertTrue(ship.getPositions().get(0).isHit());
+    }
+
     @Test
     void testOccupies1() {
         Position pos = new Position(5, 5);
-        assertTrue(ship.occupies(pos), "Error: Ship should occupy position (5, 5).");
+
+        assertTrue(ship.occupies(pos));
     }
 
-    /**
-     * Test for the occupies method (position not occupied).
-     */
     @Test
     void testOccupies2() {
         Position pos = new Position(1, 1);
-        assertFalse(ship.occupies(pos), "Error: Ship should not occupy position (1, 1).");
+
+        assertFalse(ship.occupies(pos));
     }
 
-    /**
-     * Test for the tooCloseTo method with another IShip (ships too close).
-     * Cyclomatic Complexity: 2
-     */
     @Test
     void testTooCloseToShip1() {
         Ship nearbyShip = new Barge(Compass.NORTH, new Position(5, 6));
-        assertTrue(ship.tooCloseTo(nearbyShip), "Error: Ships should be too close.");
+
+        assertTrue(ship.tooCloseTo(nearbyShip));
     }
 
-    /**
-     * Test for the tooCloseTo method with another IShip (ships not close).
-     */
     @Test
     void testTooCloseToShip2() {
         Ship farShip = new Barge(Compass.NORTH, new Position(10, 10));
-        assertFalse(ship.tooCloseTo(farShip), "Error: Ships should not be too close.");
+
+        assertFalse(ship.tooCloseTo(farShip));
     }
 
-    /**
-     * Test for the tooCloseTo method with an IPosition (positions adjacent).
-     * Cyclomatic Complexity: 2
-     */
+    @Test
+    void testTooCloseToShipWithEmptyPositions() {
+        Ship emptyShip = new Barge(Compass.NORTH, new Position(10, 10));
+        emptyShip.getPositions().clear();
+
+        assertFalse(ship.tooCloseTo(emptyShip));
+    }
+
+    @Test
+    void testTooCloseToShipWithLaterPositionAdjacent() {
+        Ship otherShip = new Galleon(
+                Compass.EAST,
+                new Position(5, 8)
+        );
+
+        assertTrue(ship.tooCloseTo(otherShip));
+    }
+
     @Test
     void testTooCloseToPosition1() {
-        Position pos = new Position(5, 6); // Adjacent position
-        assertTrue(ship.tooCloseTo(pos), "Error: Ship should be too close to the given position.");
+        Position pos = new Position(5, 6);
+
+        assertTrue(ship.tooCloseTo(pos));
     }
 
-    /**
-     * Test for the tooCloseTo method with an IPosition (positions not adjacent).
-     */
     @Test
     void testTooCloseToPosition2() {
-        Position pos = new Position(7, 7); // Non-adjacent position
-        assertFalse(ship.tooCloseTo(pos), "Error: Ship should not be too close to the given position.");
+        Position pos = new Position(7, 7);
+
+        assertFalse(ship.tooCloseTo(pos));
     }
 
-    /**
-     * Test for the getTopMostPos method.
-     * Cyclomatic Complexity: 2
-     */
+    @Test
+    void testTooCloseToPositionWithMultiplePositions() {
+        Ship multiShip = new Frigate(Compass.NORTH, new Position(5, 5));
+
+        assertTrue(multiShip.tooCloseTo(new Position(6, 6)));
+        assertFalse(multiShip.tooCloseTo(new Position(10, 10)));
+    }
+
     @Test
     void testGetTopMostPos() {
-        assertEquals(5, ship.getTopMostPos(), "Error: The topmost position should be 5.");
+        assertEquals(5, ship.getTopMostPos());
     }
 
-    /**
-     * Test for the getBottomMostPos method.
-     * Cyclomatic Complexity: 2
-     */
     @Test
     void testGetBottomMostPos() {
-        assertEquals(5, ship.getBottomMostPos(), "Error: The bottommost position should be 5.");
+        assertEquals(5, ship.getBottomMostPos());
     }
 
-    /**
-     * Test for the getLeftMostPos method.
-     * Cyclomatic Complexity: 2
-     */
     @Test
     void testGetLeftMostPos() {
-        assertEquals(5, ship.getLeftMostPos(), "Error: The leftmost position should be 5.");
+        assertEquals(5, ship.getLeftMostPos());
     }
 
-    /**
-     * Test for the getRightMostPos method.
-     * Cyclomatic Complexity: 2
-     */
     @Test
     void testGetRightMostPos() {
-        assertEquals(5, ship.getRightMostPos(), "Error: The rightmost position should be 5.");
+        assertEquals(5, ship.getRightMostPos());
     }
 
-    /**
-     * Test for the getRightMostPos method.
-     * Cyclomatic Complexity: 2
-     */
+    @Test
+    void testGetExtremePositionsWithMultiplePositions() {
+        Ship multiShip = new Frigate(Compass.NORTH, new Position(5, 5));
+
+        assertEquals(5, multiShip.getTopMostPos());
+        assertEquals(8, multiShip.getBottomMostPos());
+        assertEquals(5, multiShip.getLeftMostPos());
+        assertEquals(5, multiShip.getRightMostPos());
+    }
+
+    @Test
+    void testGetExtremePositionsWithHorizontalShip() {
+        Ship multiShip = new Frigate(Compass.EAST, new Position(5, 5));
+
+        assertEquals(5, multiShip.getTopMostPos());
+        assertEquals(5, multiShip.getBottomMostPos());
+        assertEquals(5, multiShip.getLeftMostPos());
+        assertEquals(8, multiShip.getRightMostPos());
+    }
+
+    @Test
+    void testIsInsideBoard() {
+        assertTrue(ship.isInsideBoard());
+        assertTrue(shipBorder.isInsideBoard());
+
+        Ship outsideShip = new Barge(Compass.NORTH, new Position(-1, 0));
+
+        assertFalse(outsideShip.isInsideBoard());
+    }
+
+    @Test
+    void testIsInsideBoardWithShipAtRightBoundary() {
+        Ship inside = new Frigate(
+                Compass.EAST,
+                new Position(5, Game.BOARD_SIZE - 4)
+        );
+
+        assertTrue(inside.isInsideBoard());
+    }
+
+    @Test
+    void testIsInsideBoardOutsideRightBoundary() {
+        Ship outside = new Frigate(
+                Compass.EAST,
+                new Position(5, Game.BOARD_SIZE - 3)
+        );
+
+        assertFalse(outside.isInsideBoard());
+    }
+
+    @Test
+    void testIsInsideBoardOutsideBottomBoundary() {
+        Ship outside = new Frigate(
+                Compass.NORTH,
+                new Position(Game.BOARD_SIZE - 3, 5)
+        );
+
+        assertFalse(outside.isInsideBoard());
+    }
+
+    @Test
+    void testToString() {
+        assertEquals(
+                "[Barca n " + ship.getPosition() + "]",
+                ship.toString()
+        );
+    }
+
+    @Test
+    void testBuildShip() {
+        Position pos = new Position(5, 5);
+
+        assertInstanceOf(Barge.class,
+                Ship.buildShip("barca", Compass.NORTH, pos));
+
+        assertInstanceOf(Caravel.class,
+                Ship.buildShip("caravela", Compass.NORTH, pos));
+
+        assertInstanceOf(Carrack.class,
+                Ship.buildShip("nau", Compass.NORTH, pos));
+
+        assertInstanceOf(Frigate.class,
+                Ship.buildShip("fragata", Compass.NORTH, pos));
+
+        assertInstanceOf(Galleon.class,
+                Ship.buildShip("galeao", Compass.NORTH, pos));
+
+        assertNull(Ship.buildShip("invalid", Compass.NORTH, pos));
+    }
+
     @Test
     void testGetAdjacentPositions() {
-        assertEquals(8, ship.getAdjacentPositions().size(), "Error: The number of adjacent positions of a barge in the middle of the tray should be 8.");
-        assertEquals(3, shipBorder.getAdjacentPositions().size(), "Error: The number of adjacent positions of a barge in the middle of the tray should be 8.");
+        assertEquals(
+                8,
+                ship.getAdjacentPositions().size()
+        );
+
+        assertEquals(
+                3,
+                shipBorder.getAdjacentPositions().size()
+        );
     }
 
+    @Test
+    void testGetAdjacentPositionsExcludesOccupiedAndDuplicates() {
+        Ship multiPositionShip =
+                new Caravel(Compass.NORTH, new Position(5, 5));
 
+        IPosition occupied =
+                multiPositionShip.getPositions().get(0);
+
+        List<IPosition> result =
+                multiPositionShip.getAdjacentPositions();
+
+        assertFalse(result.contains(occupied));
+
+        assertEquals(
+                result.size(),
+                result.stream().distinct().count()
+        );
+    }
+
+    @Test
+    void testGetTopMostPosWhenLaterPositionIsHigher() {
+        Ship testShip = new Galleon(Compass.NORTH, new Position(5, 5));
+
+        // Make the first position lower than the other positions.
+        testShip.getPositions().set(0, new Position(10, 10));
+
+        assertEquals(5, testShip.getTopMostPos());
+    }
+
+    @Test
+    void testGetLeftMostPosWhenLaterPositionIsFurtherLeft() {
+        Ship testShip = new Galleon(
+                Compass.EAST,
+                new Position(5, 8)
+        );
+
+        assertEquals(6, testShip.getLeftMostPos());
+    }
+
+    // Additional tests for assertion branches
+
+    @Test
+    void testBuildShipWithNullShipKind() {
+        assertThrows(AssertionError.class, () ->
+                Ship.buildShip(null, Compass.NORTH, new Position(5, 5))
+        );
+    }
+
+    @Test
+    void testBuildShipWithNullBearing() {
+        assertThrows(AssertionError.class, () ->
+                Ship.buildShip("barca", null, new Position(5, 5))
+        );
+    }
+
+    @Test
+    void testBuildShipWithNullPosition() {
+        assertThrows(AssertionError.class, () ->
+                Ship.buildShip("barca", Compass.NORTH, null)
+        );
+    }
+
+    @Test
+    void testOccupiesWithNullPosition() {
+        assertThrows(AssertionError.class, () ->
+                ship.occupies(null)
+        );
+    }
+
+    @Test
+    void testTooCloseToShipWithNull() {
+        assertThrows(AssertionError.class, () ->
+                ship.tooCloseTo((IShip) null)
+        );
+    }
+
+    @Test
+    void testTooCloseToPositionWithNull() {
+        assertThrows(AssertionError.class, () ->
+                ship.tooCloseTo((IPosition) null)
+        );
+    }
+
+    @Test
+    void testShootWithNullPosition() {
+        assertThrows(AssertionError.class, () ->
+                ship.shoot(null)
+        );
+    }
+
+    @Test
+    void testShootWithPositionOutsideBoard() {
+        Position outside = new Position(-1, 5);
+
+        assertThrows(AssertionError.class, () ->
+                ship.shoot(outside)
+        );
+    }
+
+    // Additional tests for isInsideBoard condition branches
+
+    @Test
+    void testIsInsideBoardOutsideLeftBoundary() {
+        Ship outside = new Barge(
+                Compass.NORTH,
+                new Position(5, -1)
+        );
+
+        assertFalse(outside.isInsideBoard());
+    }
+
+    @Test
+    void testIsInsideBoardOutsideRightBoundaryWithBarge() {
+        Ship outside = new Barge(
+                Compass.NORTH,
+                new Position(5, Game.BOARD_SIZE)
+        );
+
+        assertFalse(outside.isInsideBoard());
+    }
+
+    @Test
+    void testIsInsideBoardOutsideTopBoundaryWithBarge() {
+        Ship outside = new Barge(
+                Compass.NORTH,
+                new Position(-1, 5)
+        );
+
+        assertFalse(outside.isInsideBoard());
+    }
+
+    @Test
+    void testIsInsideBoardOutsideBottomBoundaryWithBarge() {
+        Ship outside = new Barge(
+                Compass.NORTH,
+                new Position(Game.BOARD_SIZE, 5)
+        );
+
+        assertFalse(outside.isInsideBoard());
+    }
 }
