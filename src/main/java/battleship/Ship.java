@@ -112,11 +112,8 @@ public abstract class Ship implements IShip
 		this.category = Objects.requireNonNull(category, "Ship's category must not be null");
 		this.bearing = Objects.requireNonNull(bearing, "Ship's bearing must not be null");
 		this.pos = Objects.requireNonNull(pos, "Ship's position must not be null");
-	
-		this.category = category;
-		this.bearing = bearing;
-		this.pos = pos;
-		this.size = size;
+
+        this.size=size;
 
 		positions = new ArrayList<>();
     }
@@ -160,9 +157,11 @@ public abstract class Ship implements IShip
 		for (IPosition position : getPositions())
 		{
 			List<IPosition> adjacents = position.adjacentPositions();
-			for (IPosition adj : adjacents)
-				if (!getPositions().contains(adj) && !adjacentPositions.contains(adj))
-					adjacentPositions.add(adj);
+			for (IPosition adj : adjacents) {
+                boolean occupiedPositions = !getPositions().contains(adj);
+                if (occupiedPositions && !adjacentPositions.contains(adj))
+                    adjacentPositions.add(adj);
+            }
 		}
 		return adjacentPositions;
 	}
@@ -242,12 +241,25 @@ public abstract class Ship implements IShip
     @Override
     public int getTopMostPos()
     {
-	int top = getPositions().get(0).getRow();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getRow() < top)
-		top = getPositions().get(i).getRow();
-	return top;
-    }
+		return extracted(true,true);
+	}
+
+	private int extracted(boolean useRow, boolean findMinimum) {
+		int extreme = useRow
+				? getPositions().get(0).getRow()
+				: getPositions().get(0).getColumn();
+
+		for (int i = 1; i < getSize(); i++)
+		{
+			int value = useRow
+					? getPositions().get(i).getRow()
+					: getPositions().get(i).getColumn();
+
+			if (findMinimum ? value < extreme : value > extreme)
+				extreme = value;
+		}
+		return extreme;
+	}
 
 	/**
 	 * Gets bottom most pos.
@@ -262,12 +274,8 @@ public abstract class Ship implements IShip
     @Override
     public int getBottomMostPos()
     {
-	int bottom = getPositions().get(0).getRow();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getRow() > bottom)
-			bottom = getPositions().get(i).getRow();
-	return bottom;
-    }
+		return extracted(true, false);
+	}
 
 	/**
 	 * Gets left most pos.
@@ -282,11 +290,7 @@ public abstract class Ship implements IShip
     @Override
     public int getLeftMostPos()
     {
-	int left = getPositions().get(0).getColumn();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getColumn() < left)
-			left = getPositions().get(i).getColumn();
-	return left;
+		return extracted(false,true);
     }
 
 	/**
@@ -302,11 +306,7 @@ public abstract class Ship implements IShip
     @Override
     public int getRightMostPos()
     {
-	int right = getPositions().get(0).getColumn();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getColumn() > right)
-		right = getPositions().get(i).getColumn();
-	return right;
+		return extracted(false,false);
     }
 
 	/**

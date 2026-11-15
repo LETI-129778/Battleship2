@@ -220,26 +220,40 @@
 		 * @throws RuntimeException if there is an error during the JSON serialization of the shots.
 		 */
 		public String randomEnemyFire() {
-	
-			// Criar uma instância de Random com uma seed baseada no timestamp atual
+
+			Set<IPosition> UsablePosition = createUsablePositions();
+
+			List<IPosition> candidateShots = new ArrayList<>(UsablePosition);
+
+			List<IPosition> shots = getShots();
+
+			extracted(shots);
+
+			this.fireShots(shots);
+
+			return Game.jsonShots(shots);
+		}
+
+		private static void extracted(List<IPosition> shots) {
+			System.out.print("rajada ");
+			for (IPosition shot : shots)
+				System.out.print(shot + " ");
+			System.out.println();
+		}
+
+		private List<IPosition> getShots() {
 			Random random = new Random(System.currentTimeMillis());
-	
-			Set<IPosition> usablePositions = new HashSet<IPosition>();
-			for (int r = 0; r < BOARD_SIZE; r++)
-				for (int c = 0; c < BOARD_SIZE; c++)
-					usablePositions.add(new Position(r, c));
-	
-			this.myFleet.getSunkShips().forEach(ship -> usablePositions.removeAll(ship.getAdjacentPositions()));
-			this.alienMoves.forEach(move ->  usablePositions.removeAll(move.getShots()));
-	
+
+			Set<IPosition> usablePositions = createUsablePositions();
+
 			List<IPosition> candidateShots = new ArrayList<>(usablePositions);
-	
+
 			// Criar lista para armazenar os tiros
 			List<IPosition> shots = new ArrayList<IPosition>();
-	
+
 			System.out.println();
 			// Gerar coordenadas únicas até atingir o número definido por NUMBER_SHOTS
-	
+
 			IPosition newShot = null;
 			if (candidateShots.size() >= Game.NUMBER_SHOTS)
 				while (shots.size() < Game.NUMBER_SHOTS) {
@@ -256,18 +270,21 @@
 				while (shots.size() < Game.NUMBER_SHOTS)
 					shots.add(newShot);
 			}
-	
-			System.out.print("rajada ");
-			for (IPosition shot : shots)
-				System.out.print(shot + " ");
-			System.out.println();
-	
-			this.fireShots(shots);
-	
-			return Game.jsonShots(shots);
+			return shots;
 		}
-	
-	
+
+		private Set<IPosition> createUsablePositions() {
+			Set<IPosition> usablePositions = new HashSet<IPosition>();
+			for (int r = 0; r < BOARD_SIZE; r++)
+				for (int c = 0; c < BOARD_SIZE; c++)
+					usablePositions.add(new Position(r, c));
+
+			this.myFleet.getSunkShips().forEach(ship -> usablePositions.removeAll(ship.getAdjacentPositions()));
+			this.alienMoves.forEach(move ->  usablePositions.removeAll(move.getShots()));
+			return usablePositions;
+		}
+
+
 		/**
 		 * Reads and processes the enemy fire input from the specified scanner.
 		 * The method expects input describing positions for enemy shots. It verifies
