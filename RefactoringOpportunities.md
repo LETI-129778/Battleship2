@@ -8,7 +8,9 @@
 | `IGameTest` | Dead Code / Redundancy | Safe Delete | 129774 |
 | `Move` | Duplicated Code | Introduce Constant | 129778 |
 | `Move::processEnemyFire` | Long Method / High Complexity | Extract Method | 129778 |
-| `Ship` | Primitive Obsession / Long Parameter List | Replace Type with Object | 129774 |
+| `Ship::getTopMostPos(),getBottomMostPos(),getRightMostPos(),getLeftMostPos()` | Duplicated Code | Extract Method | 129774 |
+| `Ship::Ship()` | Redundant Assignment | Safe Delete | 129774 |
+| `Ship::isInsideBoard()` | Complex Conditions | Decompose Conditional | 129774 |
 | `Tasks` | Duplicated Code | Introduce Constant | 129773 |
 | `Tasks::menu` | Long Method / High Complexity | Extract Method | 129773 |
 | `Tasks::atualizarInterfaceGrafica` | Long Method / High Complexity | Extract Method | 129773 |
