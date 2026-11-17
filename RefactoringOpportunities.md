@@ -17,3 +17,4 @@
 | `Move` | Duplicated Code | Extract Method | 129778 |
 | `Fleet::getShipsLike, Fleet::getFloatingShips, Fleet::getSunkShips` | Duplicated Code (mesmo ciclo de filtragem) | Extract Method | 129778 |
 | `Fleet::colisionRisk` | Loop com índice e retorno antecipado | Replace Loop with Pipeline | 129778 |
+| `Tasks::menu` | Switch Statements / High Complexity | Extract Method | 129773 |
