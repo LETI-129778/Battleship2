@@ -1,0 +1,147 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > stopwatch</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">battleship</a>
+</div>
+
+<h1>Coverage Summary for Class: stopwatch (battleship)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">stopwatch</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66,7%
+  </span>
+  <span class="absValue">
+    (4/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package battleship;
+&nbsp;
+&nbsp;import org.apache.commons.lang3.time.StopWatch;
+&nbsp;
+<b class="fc">&nbsp;public class stopwatch {</b>
+<b class="fc">&nbsp;    private final StopWatch cronometroJogador = new StopWatch();</b>
+&nbsp;
+&nbsp;    // Chamado na primeira vez que o jogador começa o seu turno no jogo
+&nbsp;    public void iniciarCronometroJogo() {
+<b class="fc">&nbsp;        cronometroJogador.start();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Chamado quando o turno passa para o Oponente (PAUSA o tempo sem reset)
+&nbsp;    public void pausarTurnoJogador() {
+<b class="pc">&nbsp;        if (cronometroJogador.isStarted() &amp;&amp; !cronometroJogador.isSuspended()) {</b>
+<b class="fc">&nbsp;            cronometroJogador.suspend();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Chamado quando o turno volta para o Jogador (RETOMA de onde parou)
+&nbsp;    public void retomarTurnoJogador() {
+<b class="fc">&nbsp;        if (cronometroJogador.isSuspended()) {</b>
+<b class="fc">&nbsp;            cronometroJogador.resume();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Retorna o tempo formatado (ex: &quot;00:02:15.450&quot;)
+&nbsp;    public String getTempoFormatado() {
+<b class="fc">&nbsp;        return cronometroJogador.toString();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-11-17 20:15</div>
+</div>
+</body>
+</html>

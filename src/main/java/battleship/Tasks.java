@@ -33,6 +33,9 @@ public class Tasks {
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
 	private static final String TEMPO = "tempo";
+	public static final String SEPARATOR = "=====================================================";
+	public static final String TEMPO_ACUMULADO_JOGADAS = "Tempo total acumulado de todas as jogadas: ";
+
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -52,14 +55,7 @@ public class Tasks {
 
 		while (!command.equals(DESISTIR)) {
 
-			// Inicia o cronómetro na primeira ação de jogo
-			if (!cronometroIniciado && (command.equals(GERAFROTA) || command.equals(LEFROTA))) {
-				timer.iniciarCronometroJogo();
-				cronometroIniciado = true;
-			} else if (cronometroIniciado) {
-				// Retoma o turno do jogador em cada nova interação/jogada
-				timer.retomarTurnoJogador();
-			}
+			cronometroIniciado = atualizarCronometro(cronometroIniciado, command, timer);
 
 			switch (command) {
 				case GERAFROTA:
@@ -72,94 +68,15 @@ public class Tasks {
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
 					break;
-				case STATUS:
-					if (myFleet != null) {
-						myFleet.printStatus();
-						if (cronometroIniciado) {
-							System.out.println("Tempo acumulado até agora: " + timer.getTempoFormatado());
-						}
-					}
-					break;
-				case MAPA:
-					if (myFleet != null)
-						game.printMyBoard(false, true);
-					break;
 				case RAJADA:
-					if (game != null) {
-						// Turno do oponente: pausa o tempo do jogador
-						timer.pausarTurnoJogador();
-
-						game.readEnemyFire(in);
-
-						// Retoma o tempo do jogador para a próxima jogada
-						timer.retomarTurnoJogador();
-
-						myFleet.printStatus();
-						game.printMyBoard(true, false);
-
-						if (game.getRemainingShips() == 0) {
-							timer.pausarTurnoJogador();
-							System.out.println("\n=================================================");
-							System.out.println("FIM DO JOGO!");
-							System.out.println("Tempo total acumulado de todas as jogadas: " + timer.getTempoFormatado());
-							System.out.println("=================================================");
-
-							JogadasPDF.criarPDF(game.getAlienMoves());
-
-							game.over();
-							System.exit(0);
-						}
-					}
+					processarRajada(game, timer, in, myFleet);
 					break;
 				case SIMULA:
-					if (game != null) {
-						// Garante que o cronómetro está a contar durante toda a simulação
-						timer.retomarTurnoJogador();
-
-						while (game.getRemainingShips() > 0){
-							game.randomEnemyFire();
-							myFleet.printStatus();
-							game.printMyBoard(true, false);
-
-							// chamada aqui dentro porque o simula tem o seu próprio ciclo automático
-							atualizarInterfaceGrafica(game, myFleet);
-							try {
-								Thread.sleep(3000);
-							} catch (InterruptedException e) {
-								Thread.currentThread().interrupt();
-							}
-						}
-
-						if (game.getRemainingShips() == 0) {
-							timer.pausarTurnoJogador();
-							System.out.println("\n=================================================");
-							System.out.println("SIMULAÇÃO CONCLUÍDA!");
-							System.out.println("Tempo total acumulado de todas as jogadas: " + timer.getTempoFormatado());
-							System.out.println("=================================================");
-
-							JogadasPDF.criarPDF(game.getAlienMoves());
-
-							game.over();
-							System.exit(0);
-						}
-					}
-					break;
-				case TIROS:
-					if (game != null)
-						game.printMyBoard(true, true);
-					break;
-				case TEMPO:
-					if (cronometroIniciado) {
-						System.out.println("Tempo acumulado de todas as tuas jogadas: " + timer.getTempoFormatado());
-					} else {
-						System.out.println("O cronómetro ainda não iniciou. Gera ou lê uma frota primeiro.");
-					}
-					break;
-				case AJUDA:
-					menuHelp();
+					simularJogoCompleto(game, timer, myFleet);
 					break;
 				default:
-					System.out.println("Que comando é esse??? Repete ...");
+					processarComandoVisualizacao(command, game, myFleet, timer, cronometroIniciado);
+					break;
 			}
 			// Atualiza sempre o tabuleiro após qualquer ação
 			if (game != null && myFleet != null) {
@@ -170,15 +87,126 @@ public class Tasks {
 			command = in.next();
 		}
 
+		tratarDesistencia(cronometroIniciado, timer);
+		System.out.println(GOODBYE_MESSAGE);
+	}
+
+	private static void processarComandoVisualizacao(String command, IGame game, IFleet myFleet, stopwatch timer, boolean cronometroIniciado) {
+		switch (command) {
+			case STATUS:
+				if (myFleet != null) {
+					myFleet.printStatus();
+					if (cronometroIniciado) {
+						System.out.println("Tempo acumulado até agora: " + timer.getTempoFormatado());
+					}
+				}
+				break;
+			case MAPA:
+				if (myFleet != null)
+					game.printMyBoard(false, true);
+				break;
+			case TIROS:
+				if (game != null)
+					game.printMyBoard(true, true);
+				break;
+			case TEMPO:
+				if (cronometroIniciado) {
+					System.out.println("Tempo acumulado de todas as tuas jogadas: " + timer.getTempoFormatado());
+				} else {
+					System.out.println("O cronómetro ainda não iniciou. Gera ou lê uma frota primeiro.");
+				}
+				break;
+			case AJUDA:
+				menuHelp();
+				break;
+			default:
+				System.out.println("Que comando é esse??? Repete ...");
+		}
+	}
+
+	private static void tratarDesistencia(boolean cronometroIniciado, stopwatch timer) {
 		// Quando o jogador escreve "desisto"
 		if (cronometroIniciado) {
 			timer.pausarTurnoJogador();
-			System.out.println("\n=================================================");
+			System.out.println(SEPARATOR);
 			System.out.println("JOGO TERMINADO POR DESISTÊNCIA.");
-			System.out.println("Tempo total acumulado de todas as jogadas: " + timer.getTempoFormatado());
-			System.out.println("=================================================");
+			System.out.println(TEMPO_ACUMULADO_JOGADAS + timer.getTempoFormatado());
+			System.out.println(SEPARATOR);
 		}
-		System.out.println(GOODBYE_MESSAGE);
+	}
+
+	private static boolean atualizarCronometro(boolean cronometroIniciado, String command, stopwatch timer) {
+		// Inicia o cronómetro na primeira ação de jogo
+		if (!cronometroIniciado && (command.equals(GERAFROTA) || command.equals(LEFROTA))) {
+			timer.iniciarCronometroJogo();
+			cronometroIniciado = true;
+		} else if (cronometroIniciado) {
+			// Retoma o turno do jogador em cada nova interação/jogada
+			timer.retomarTurnoJogador();
+		}
+		return cronometroIniciado;
+	}
+
+	private static void simularJogoCompleto(IGame game, stopwatch timer, IFleet myFleet) {
+		if (game != null) {
+			// Garante que o cronómetro está a contar durante toda a simulação
+			timer.retomarTurnoJogador();
+
+			while (game.getRemainingShips() > 0){
+				game.randomEnemyFire();
+				myFleet.printStatus();
+				game.printMyBoard(true, false);
+
+				// chamada aqui dentro porque o simula tem o seu próprio ciclo automático
+				atualizarInterfaceGrafica(game, myFleet);
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+			}
+
+			if (game.getRemainingShips() == 0) {
+				timer.pausarTurnoJogador();
+				System.out.println(SEPARATOR);
+				System.out.println("SIMULAÇÃO CONCLUÍDA!");
+				System.out.println(TEMPO_ACUMULADO_JOGADAS + timer.getTempoFormatado());
+				System.out.println(SEPARATOR);
+
+				JogadasPDF.criarPDF(game.getAlienMoves());
+
+				game.over();
+				System.exit(0);
+			}
+		}
+	}
+
+	private static void processarRajada(IGame game, stopwatch timer, Scanner in, IFleet myFleet) {
+		if (game != null) {
+			// Turno do oponente: pausa o tempo do jogador
+			timer.pausarTurnoJogador();
+
+			game.readEnemyFire(in);
+
+			// Retoma o tempo do jogador para a próxima jogada
+			timer.retomarTurnoJogador();
+
+			myFleet.printStatus();
+			game.printMyBoard(true, false);
+
+			if (game.getRemainingShips() == 0) {
+				timer.pausarTurnoJogador();
+				System.out.println(SEPARATOR);
+				System.out.println("FIM DO JOGO!");
+				System.out.println(TEMPO_ACUMULADO_JOGADAS + timer.getTempoFormatado());
+				System.out.println(SEPARATOR);
+
+				JogadasPDF.criarPDF(game.getAlienMoves());
+
+				game.over();
+				System.exit(0);
+			}
+		}
 	}
 
 	/**
@@ -196,14 +224,14 @@ public class Tasks {
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
 		System.out.println("- " + TEMPO + ": Mostra o tempo acumulado das tuas jogadas.");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
-		System.out.println("===============================================================");
+		System.out.println(SEPARATOR);
 	}
 
 	public static Fleet buildFleet(Scanner in) {
 		assert in != null;
 		Fleet fleet = new Fleet();
 		int i = 0;
-		while (i < Fleet.FLEET_SIZE) {
+		while (i < IFleet.FLEET_SIZE) {
 			IShip s = readShip(in);
 			if (s != null) {
 				boolean success = fleet.addShip(s);
@@ -266,23 +294,39 @@ public class Tasks {
         if (game == null || myFleet == null) return;
 
 		// 1. Limpar ambos os tabuleiros (pintar tudo de água)
-		for (int linha = 0; linha < 10; linha++) {
-			for (int coluna = 0; coluna < 10; coluna++) {
-				TabuleiroVisualizacaoGrafica.pintarCelula(true, linha, coluna, javafx.scene.paint.Color.DARKBLUE);
-				TabuleiroVisualizacaoGrafica.pintarCelula(false, linha, coluna, javafx.scene.paint.Color.DARKBLUE);
-			}
-		}
+		limparTabuleiros();
 
 		// 2. Desenhar os TEUS navios no TEU tabuleiro (true)
-		if (myFleet.getShips() != null) {
-			for (IShip ship : myFleet.getShips()) {
-				for (IPosition pos : ship.getPositions()) {
-					TabuleiroVisualizacaoGrafica.pintarCelula(true, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.GRAY);
+		desenharNaviosJogador(myFleet);
+
+		// 3. Desenhar os tiros do INIMIGO (Alien Moves) no TEU tabuleiro (true)
+		desenharTirosInimigos(game);
+
+		// 4. Desenhar os TEUS tiros (My Moves) no tabuleiro do INIMIGO (false)
+		desenharTirosJogador(game);
+	}
+
+	private static void desenharTirosJogador(IGame game) {
+		if (game.getMyMoves() != null) {
+			for (IMove move : game.getMyMoves()) {
+				java.util.List<IPosition> shots = move.getShots();
+				java.util.List<IGame.ShotResult> results = move.getShotResults();
+
+				for (int i = 0; i < shots.size(); i++) {
+					IPosition pos = shots.get(i);
+					IGame.ShotResult result = results.get(i);
+
+					if (result.ship() != null) { // Acertaste num navio inimigo!
+						TabuleiroVisualizacaoGrafica.pintarCelula(false, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.RED);
+					} else { // Tiro na água
+						TabuleiroVisualizacaoGrafica.pintarCelula(false, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.LIGHTBLUE);
+					}
 				}
 			}
 		}
+	}
 
-		// 3. Desenhar os tiros do INIMIGO (Alien Moves) no TEU tabuleiro (true)
+	private static void desenharTirosInimigos(IGame game) {
 		if (game.getAlienMoves() != null) {
 			for (IMove move : game.getAlienMoves()) {
 				java.util.List<IPosition> shots = move.getShots();
@@ -301,24 +345,24 @@ public class Tasks {
 				}
 			}
 		}
+	}
 
-		// 4. Desenhar os TEUS tiros (My Moves) no tabuleiro do INIMIGO (false)
-		if (game.getMyMoves() != null) {
-			for (IMove move : game.getMyMoves()) {
-				java.util.List<IPosition> shots = move.getShots();
-				java.util.List<IGame.ShotResult> results = move.getShotResults();
-
-				for (int i = 0; i < shots.size(); i++) {
-					IPosition pos = shots.get(i);
-					IGame.ShotResult result = results.get(i);
-
-					if (result.ship() != null) { // Acertaste num navio inimigo!
-						TabuleiroVisualizacaoGrafica.pintarCelula(false, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.RED);
-					} else { // Tiro na água
-						TabuleiroVisualizacaoGrafica.pintarCelula(false, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.LIGHTBLUE);
-					}
+	private static void desenharNaviosJogador(IFleet myFleet) {
+		if (myFleet.getShips() != null) {
+			for (IShip ship : myFleet.getShips()) {
+				for (IPosition pos : ship.getPositions()) {
+					TabuleiroVisualizacaoGrafica.pintarCelula(true, pos.getRow(), pos.getColumn(), javafx.scene.paint.Color.GRAY);
 				}
 			}
 		}
-    }
+	}
+
+	private static void limparTabuleiros() {
+		for (int linha = 0; linha < 10; linha++) {
+			for (int coluna = 0; coluna < 10; coluna++) {
+				TabuleiroVisualizacaoGrafica.pintarCelula(true, linha, coluna, javafx.scene.paint.Color.DARKBLUE);
+				TabuleiroVisualizacaoGrafica.pintarCelula(false, linha, coluna, javafx.scene.paint.Color.DARKBLUE);
+			}
+		}
+	}
 }
