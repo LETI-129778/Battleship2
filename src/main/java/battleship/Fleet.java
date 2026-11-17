@@ -5,12 +5,19 @@ package battleship;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * The type Fleet.
  */
 public class Fleet implements IFleet
 {
+	// [REFACTORING] Local: Fleet | Cheiro: Duplicated Code (strings "caravela" e "barca") | Refatoração: Introduce Constant
+	private static final String GALEAO = "galeao";
+	private static final String FRAGATA = "fragata";
+	private static final String NAU = "nau";
+	private static final String CARAVELA = "caravela";
+	private static final String BARCA = "barca";
 	/**
 	 * Creates a randomly generated fleet containing ships of various predefined types.
 	 * Each ship is assigned a random bearing and position. If a ship cannot be added
@@ -24,11 +31,11 @@ public class Fleet implements IFleet
 
 		// Define the types of ships to be added
 		String[] shipTypes =
-					{"galeao",                           // 1 galleon
-				 	"fragata",                           // 1 frigate
- 				 	"nau", "nau",                        // 2 carracks
-					"caravela", "caravela", "caravela",  // 3 caravels
-					"barca", "barca", "barca", "barca"}; // 4 barges
+				{GALEAO,                       // 1 galleon
+						FRAGATA,                      // 1 frigate
+						NAU, NAU,                     // 2 carracks
+						CARAVELA, CARAVELA, CARAVELA, // 3 caravels
+						BARCA, BARCA, BARCA, BARCA};  // 4 barges
 
 		int fleetSize = 0;
 
@@ -114,12 +121,7 @@ public class Fleet implements IFleet
     {
 		assert category != null;
 
-		List<IShip> shipsLike = new ArrayList<IShip>();
-		for (IShip s : ships)
-			if (s.getCategory().equals(category))
-				shipsLike.add(s);
-
-		return shipsLike;
+		return filterShips(s -> s.getCategory().equals(category));
     }
 
 	/**
@@ -135,12 +137,7 @@ public class Fleet implements IFleet
     @Override
     public List<IShip> getFloatingShips()
     {
-		List<IShip> floatingShips = new ArrayList<IShip>();
-		for (IShip s : ships)
-			if (s.stillFloating())
-				floatingShips.add(s);
-
-		return floatingShips;
+		return filterShips(IShip::stillFloating);
     }
 
 	/**
@@ -156,14 +153,24 @@ public class Fleet implements IFleet
 	@Override
 	public List<IShip> getSunkShips()
 	{
-		List<IShip> sunkShips = new ArrayList<IShip>();
-		for (IShip s : ships)
-			if (!s.stillFloating())
-				sunkShips.add(s);
-
-		return sunkShips;
+		return filterShips(s -> !s.stillFloating());
 	}
 
+	// [REFACTORING] Local: Fleet::getShipsLike, getFloatingShips, getSunkShips | Cheiro: Duplicated Code (mesmo ciclo de filtragem 3 vezes) | Refatoração: Extract Method
+	/**
+	 * Returns the ships of the fleet that satisfy the given condition.
+	 *
+	 * @param condition the filter to apply to each ship
+	 * @return a new list with the matching ships
+	 */
+	private List<IShip> filterShips(Predicate<IShip> condition)
+	{
+		List<IShip> result = new ArrayList<>();
+		for (IShip s : ships)
+			if (condition.test(s))
+				result.add(s);
+		return result;
+	}
 	/**
 	 * Ship at ship.
 	 *
@@ -192,17 +199,13 @@ public class Fleet implements IFleet
 	 * @param s the s
 	 * @return the boolean
 	 */
+	// [REFACTORING] Local: Fleet::colisionRisk | Cheiro: Loop com índice e retorno antecipado | Refatoração: Replace Loop with Pipeline
 	private boolean colisionRisk(IShip s)
     {
 		assert s != null;
 
-		for (int i = 0; i < ships.size(); i++)
-		{
-			if (ships.get(i).tooCloseTo(s))
-				return true;
-		}
-		return false;
-    }
+		return ships.stream().anyMatch(other -> other.tooCloseTo(s));
+	}
 
 	/**
 	 * This operation prints all the given ships
@@ -223,13 +226,6 @@ public class Fleet implements IFleet
 	public void printStatus()
     {
 		System.out.println("Estado da Frota: " + this.getFloatingShips().size() + " a flutuar, " + this.getSunkShips().size() + " afundados!");
-//		printAllShips();
-//		printFloatingShips();
-//		printShipsByCategory("Galeao");
-//		printShipsByCategory("Fragata");
-//		printShipsByCategory("Nau");
-//		printShipsByCategory("Caravela");
-//		printShipsByCategory("Barca");
     }
 
 	/**
