@@ -13,3 +13,7 @@
 | `Tasks::menu` | Long Method / High Complexity | Extract Method | 129773 |
 | `Tasks::atualizarInterfaceGrafica` | Long Method / High Complexity | Extract Method | 129773 |
 | `TasksTest::testAtualizarInterfaceGraficaHitAndMiss` | Long Method / High Complexity | Extract Method | 129773 |
+| `Move::processEnemyFire` | Data Clumps | Extract Class (ShotStats) | 129778 |
+| `Move` | Duplicated Code | Extract Method | 129778 |
+| `Fleet::getShipsLike, Fleet::getFloatingShips, Fleet::getSunkShips` | Duplicated Code (mesmo ciclo de filtragem) | Extract Method | 129778 |
+| `Fleet::colisionRisk` | Loop com índice e retorno antecipado | Replace Loop with Pipeline | 129778 |
