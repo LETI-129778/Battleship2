@@ -751,7 +751,7 @@ class TasksTest {
 	}
 
 	@Test
-		void testAtualizarInterfaceGraficaHitAndMiss() throws Exception {
+	void testAtualizarInterfaceGraficaHitAndMiss() throws Exception {
 
 		Fleet fleet = new Fleet();
 

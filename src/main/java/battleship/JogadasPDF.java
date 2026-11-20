@@ -56,8 +56,7 @@ public class JogadasPDF {
 
             System.out.println("PDF criado com sucesso: jogadas.pdf");
 
-        } catch (IOException e) {
-            //e.printStackTrace();
+        } catch (IOException e) { // This block is empty on purpose
         }
     }
 }
